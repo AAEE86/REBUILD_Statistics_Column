@@ -2,13 +2,11 @@
 
 （PS：原项目2.6版本统计列功能免费版是可以使用的，但之后就不支持免费版了,理解其开源的难处，但作为基础的功能还希望官方可以提供对免费版支持）
 
-（PPS:其实可以从2.6找到源码，加以修改，奈何我不懂Java没能成功）
-
-![Quicker_20240712_101543](https://github.com/user-attachments/assets/dbc5463e-03c3-479b-8893-f7ee614422b5)
+![Quicker_20240712_140348](https://github.com/user-attachments/assets/bfee8d26-2117-4c78-8487-0c11f9c5e99f)
 样式如上图
 
 此插件功能有局限性，仅能获取本页的数据！！！（够用了...）
 
-插件需要修改以适配不同的场景，没有代码能力的还是别看了，后续可能会考虑做简单些.....（画饼）
-
-content.js 可单独做为Tampermonkey脚本使用
+![Quicker_20240712_140440](https://github.com/user-attachments/assets/c8c58357-dd82-4181-bdc2-abed8fa571f6)
+在设置页面输入对应的URL格式为 http://你的域名/app/
+输入你要计算的列就可以了
