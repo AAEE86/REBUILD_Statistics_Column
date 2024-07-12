@@ -118,11 +118,14 @@
     window.addEventListener('load', async () => {
         setTimeout(async () => {
             const result = await new Promise((resolve) => {
-                chrome.storage.sync.get(['columnNames'], resolve);
+                chrome.storage.sync.get(['columnNames', 'url'], resolve);
             });
-            if (result.columnNames) {
-                extractAndDisplayData(result.columnNames);
-                observeTableChanges(result.columnNames);
+            const currentUrl = window.location.href;
+            if (result.url && currentUrl.startsWith(result.url)) {
+                if (result.columnNames) {
+                    extractAndDisplayData(result.columnNames);
+                    observeTableChanges(result.columnNames);
+                }
             }
         }, 1000); // 延迟执行，适当调整时间
     });
