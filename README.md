@@ -6,7 +6,7 @@
 样式如上图
 
 此插件功能有局限性，仅能获取本页的数据！！！（够用了...）
-![Quicker_20240712_140440](https://github.com/user-attachments/assets/c8c58357-dd82-4181-bdc2-abed8fa571f6)
 
+![Quicker_20240712_140440](https://github.com/user-attachments/assets/c8c58357-dd82-4181-bdc2-abed8fa571f6)
 在设置页面输入对应的URL格式为 http://你的域名/app/
 输入你要计算的列就可以了
