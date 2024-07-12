@@ -1,8 +1,7 @@
 (async function() {
     'use strict';
 
-    // 主函数，提取并显示数据
-    async function extractAndDisplayData(columnNames) {
+    async function extractAndDisplayData(columnNames, calculateDuplicates, uniqueColumn) {
         const table = document.querySelector('.table'); // 根据实际情况修改选择器
 
         if (!table) {
@@ -12,27 +11,26 @@
 
         console.log('找到表格:', table);
 
-        const columnIndices = getColumnIndices(table, columnNames);
+        const columnIndices = getColumnIndices(table, columnNames, uniqueColumn);
         console.log('列索引:', columnIndices);
 
-        const totals = calculateTotals(table, columnNames, columnIndices);
+        const totals = calculateTotals(table, columnNames, columnIndices, calculateDuplicates, uniqueColumn);
         displayTotals(totals, columnIndices);
     }
 
-    // 获取列索引
-    function getColumnIndices(table, columnNames) {
+    function getColumnIndices(table, columnNames, uniqueColumn) {
         const headers = table.querySelectorAll('thead th');
-        return Array.from(headers).reduce((indices, header, index) => {
+        const indices = Array.from(headers).reduce((indices, header, index) => {
             const text = header.innerText.trim();
-            if (columnNames.includes(text)) {
+            if (columnNames.includes(text) || text === uniqueColumn) {
                 indices[text] = index;
             }
             return indices;
         }, {});
+        return indices;
     }
 
-    // 计算每列的总和
-    function calculateTotals(table, columnNames, columnIndices) {
+    function calculateTotals(table, columnNames, columnIndices, calculateDuplicates, uniqueColumn) {
         const rows = table.querySelectorAll('tbody tr');
         const totals = {};
 
@@ -42,20 +40,26 @@
             }
         });
 
+        const seen = new Set();
         rows.forEach(row => {
             const cells = row.querySelectorAll('td');
-            columnNames.forEach(name => {
+            const uniqueValue = cells[columnIndices[uniqueColumn]].innerText.trim();
+
+            columnNames.forEach((name, index) => {
                 if (columnIndices[name] !== undefined) {
                     const value = parseFloat(cells[columnIndices[name]].innerText.trim().replace(/[^\d.-]/g, '')) || 0;
-                    totals[name] += value;
+                    if (calculateDuplicates[index] || !seen.has(uniqueValue)) {
+                        totals[name] += value;
+                    }
                 }
             });
+
+            seen.add(uniqueValue);
         });
 
         return totals;
     }
 
-    // 显示总和
     function displayTotals(totals, columnIndices) {
         const sumText = Object.entries(totals).map(([name, total]) => {
             if (columnIndices[name] !== undefined) {
@@ -64,13 +68,11 @@
             return '';
         }).join('');
 
-        // 检查并移除已存在的 sumDiv
         const existingSumDiv = document.querySelector('.sum-div');
         if (existingSumDiv) {
             existingSumDiv.remove();
         }
 
-        // 创建一个新的 div 元素并设置样式
         const sumDiv = document.createElement('div');
         sumDiv.innerHTML = sumText;
         sumDiv.classList.add('sum-div');
@@ -94,8 +96,7 @@
         document.body.appendChild(sumDiv);
     }
 
-    // 监听表格变化
-    function observeTableChanges(columnNames) {
+    function observeTableChanges(columnNames, calculateDuplicates, uniqueColumn) {
         const targetNode = document.querySelector('.table');
         if (!targetNode) {
             console.log('未找到 .table 元素以进行观察');
@@ -106,7 +107,7 @@
         const observer = new MutationObserver((mutationsList) => {
             for (const mutation of mutationsList) {
                 if (mutation.type === 'childList') {
-                    extractAndDisplayData(columnNames);
+                    extractAndDisplayData(columnNames, calculateDuplicates, uniqueColumn);
                 }
             }
         });
@@ -114,17 +115,16 @@
         observer.observe(targetNode, config);
     }
 
-    // 等待页面加载完成再执行
     window.addEventListener('load', async () => {
         setTimeout(async () => {
             const result = await new Promise((resolve) => {
-                chrome.storage.sync.get(['columnNames', 'url'], resolve);
+                chrome.storage.sync.get(['columnNames', 'calculateDuplicates', 'url', 'uniqueColumn'], resolve);
             });
             const currentUrl = window.location.href;
             if (result.url && currentUrl.startsWith(result.url)) {
                 if (result.columnNames) {
-                    extractAndDisplayData(result.columnNames);
-                    observeTableChanges(result.columnNames);
+                    extractAndDisplayData(result.columnNames, result.calculateDuplicates, result.uniqueColumn);
+                    observeTableChanges(result.columnNames, result.calculateDuplicates, result.uniqueColumn);
                 }
             }
         }, 1000); // 延迟执行，适当调整时间

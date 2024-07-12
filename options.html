@@ -12,7 +12,7 @@
             display: flex;
             justify-content: center;
             align-items: flex-start;
-            height: auto;
+            height: 100vh;
             overflow-y: auto;
         }
         .container {
@@ -53,6 +53,9 @@
             border-color: #4CAF50;
             outline: none;
         }
+        input[type="checkbox"] {
+            margin-left: 10px;
+        }
         button {
             background-color: #4CAF50;
             color: white;
@@ -86,9 +89,11 @@
             <label for="url">目标网址:</label>
             <input type="text" id="url" placeholder="请输入网址">
         </div>
-        <div id="options-container">
-
+        <div class="form-group">
+            <label for="unique-column">判断重复列:</label>
+            <input type="text" id="unique-column" placeholder="请输入列名称">
         </div>
+        <div id="options-container"></div>
         <button id="add-column">添加列</button>
         <button id="save-options">保存选项</button>
     </div>

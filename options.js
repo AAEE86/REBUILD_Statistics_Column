@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', function() {
     loadOptions();
 });
 
-function addColumn(name = '') {
+function addColumn(name = '', calculateDuplicates = true) {
     var container = document.createElement('div');
     container.className = 'form-group';
 
@@ -25,6 +25,16 @@ function addColumn(name = '') {
     input.placeholder = '请输入列名称';
     container.appendChild(input);
 
+    var checkboxLabel = document.createElement('label');
+    checkboxLabel.textContent = '计算重复:';
+    container.appendChild(checkboxLabel);
+
+    var checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+    checkbox.className = 'calculate-duplicates';
+    checkbox.checked = calculateDuplicates;
+    container.appendChild(checkbox);
+
     var removeButton = document.createElement('button');
     removeButton.className = 'remove-column';
     removeButton.textContent = '删除';
@@ -38,27 +48,34 @@ function addColumn(name = '') {
 
 function saveOptions() {
     var columnNames = [];
+    var calculateDuplicates = [];
     var inputs = document.getElementsByClassName('column-name');
+    var checkboxes = document.getElementsByClassName('calculate-duplicates');
     for (var i = 0; i < inputs.length; i++) {
         columnNames.push(inputs[i].value);
+        calculateDuplicates.push(checkboxes[i].checked);
     }
 
     var url = document.getElementById('url').value;
+    var uniqueColumn = document.getElementById('unique-column').value;
 
-    chrome.storage.sync.set({ columnNames: columnNames, url: url }, function() {
+    chrome.storage.sync.set({ columnNames: columnNames, calculateDuplicates: calculateDuplicates, url: url, uniqueColumn: uniqueColumn }, function() {
         alert('选项已保存');
     });
 }
 
 function loadOptions() {
-    chrome.storage.sync.get(['columnNames', 'url'], function(result) {
+    chrome.storage.sync.get(['columnNames', 'calculateDuplicates', 'url', 'uniqueColumn'], function(result) {
         if (result.url) {
             document.getElementById('url').value = result.url;
         }
-        if (result.columnNames) {
-            result.columnNames.forEach(function(name) {
-                addColumn(name);
-            });
+        if (result.uniqueColumn) {
+            document.getElementById('unique-column').value = result.uniqueColumn;
+        }
+        if (result.columnNames && result.calculateDuplicates) {
+            for (var i = 0; i < result.columnNames.length; i++) {
+                addColumn(result.columnNames[i], result.calculateDuplicates[i]);
+            }
         }
     });
 }
