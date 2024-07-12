@@ -1,0 +1,32 @@
+{
+  "manifest_version": 2,
+  "name": "Extract Table Data",
+  "version": "0.2",
+  "description": "Extract data from specific table columns and display totals.",
+  "permissions": [
+    "activeTab"
+  ],
+  "content_scripts": [
+    {
+      "matches": ["http://101.200.62.21:2024/app/huikuan/list"],
+      "js": ["content.js"]
+    }
+  ],
+  "background": {
+    "scripts": ["background.js"],
+    "persistent": false
+  },
+  "browser_action": {
+    "default_title": "Extract Table Data",
+    "default_icon": {
+      "16": "icon.png",
+      "48": "icon.png",
+      "128": "icon.png"
+    }
+  },
+  "icons": {
+    "16": "icon.png",
+    "48": "icon.png",
+    "128": "icon.png"
+  }
+}
