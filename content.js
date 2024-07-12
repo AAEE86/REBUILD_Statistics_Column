@@ -33,6 +33,7 @@
     function calculateTotals(table, columnNames, columnIndices, calculateDuplicates, uniqueColumn) {
         const rows = table.querySelectorAll('tbody tr');
         const totals = {};
+        const selectedRows = table.querySelectorAll('tbody tr.active');
 
         columnNames.forEach(name => {
             if (columnIndices[name] !== undefined) {
@@ -41,7 +42,9 @@
         });
 
         const seen = new Set();
-        rows.forEach(row => {
+        const targetRows = selectedRows.length > 0 ? selectedRows : rows;
+
+        targetRows.forEach(row => {
             const cells = row.querySelectorAll('td');
             const uniqueValue = cells[columnIndices[uniqueColumn]].innerText.trim();
 
@@ -63,7 +66,7 @@
     function displayTotals(totals, columnIndices) {
         const sumText = Object.entries(totals).map(([name, total]) => {
             if (columnIndices[name] !== undefined) {
-                return `<span style="margin-right: 20px;">总${name}: <span style="color: #4CAF50;">¥ ${total.toFixed(2)}</span></span>`;
+                return `<span style="margin-right: 10px;">总${name}: <span style="color: #4CAF50;">¥ ${total.toFixed(2)}</span></span>`;
             }
             return '';
         }).join('');
@@ -87,7 +90,7 @@
             border-radius: 8px;
             z-index: 9999;
             font-family: Arial, sans-serif;
-            font-size: 14px;
+            font-size: 13px;
             display: flex;
             align-items: center;
             justify-content: flex-start;
@@ -113,6 +116,17 @@
         });
 
         observer.observe(targetNode, config);
+
+        // 添加对选项框状态变化的监听
+        targetNode.addEventListener('change', (event) => {
+            if (event.target.matches('.custom-control-input')) {
+                const row = event.target.closest('tr');
+                if (row) {
+                    row.classList.toggle('active', event.target.checked);
+                    extractAndDisplayData(columnNames, calculateDuplicates, uniqueColumn);
+                }
+            }
+        });
     }
 
     window.addEventListener('load', async () => {
