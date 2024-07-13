@@ -8,7 +8,8 @@
 
 此插件功能有局限性，仅能获取本页的数据！！！（够用了...）
 
-![image](https://github.com/user-attachments/assets/4909b111-f9d4-4225-b7bc-64e65154cb46)
+![image](https://github.com/user-attachments/assets/300d10fe-3330-411a-abf3-b619a43afe47)
+
 
 在设置页面输入对应的URL格式为 http://你的域名/app/
 输入你要计算的列就可以了
