@@ -41,24 +41,46 @@
             }
         });
 
-        const seen = new Set();
-        const targetRows = selectedRows.length > 0 ? selectedRows : rows;
-
-        targetRows.forEach(row => {
-            const cells = row.querySelectorAll('td');
-            const uniqueValue = cells[columnIndices[uniqueColumn]].innerText.trim();
-
-            columnNames.forEach((name, index) => {
-                if (columnIndices[name] !== undefined) {
-                    const value = parseFloat(cells[columnIndices[name]].innerText.trim().replace(/[^\d.-]/g, '')) || 0;
-                    if (calculateDuplicates[index] || !seen.has(uniqueValue)) {
-                        totals[name] += value;
+        // 检查唯一列是否存在
+        if (columnIndices[uniqueColumn] === undefined) {
+            // 如果唯一列不存在，正常计算所有行
+            const targetRows = selectedRows.length > 0 ? selectedRows : rows;
+            targetRows.forEach(row => {
+                const cells = row.querySelectorAll('td');
+                columnNames.forEach((name, index) => {
+                    if (columnIndices[name] !== undefined) {
+                        const cell = cells[columnIndices[name]];
+                        if (cell) {
+                            const value = parseFloat(cell.innerText.trim().replace(/[^\d.-]/g, '')) || 0;
+                            totals[name] += value;
+                        }
                     }
-                }
+                });
             });
+        } else {
+            // 如果唯一列存在，根据唯一列计算
+            const seen = new Set();
+            const targetRows = selectedRows.length > 0 ? selectedRows : rows;
+            targetRows.forEach(row => {
+                const cells = row.querySelectorAll('td');
+                const uniqueCell = cells[columnIndices[uniqueColumn]];
+                const uniqueValue = uniqueCell ? uniqueCell.innerText.trim() : null;
 
-            seen.add(uniqueValue);
-        });
+                columnNames.forEach((name, index) => {
+                    if (columnIndices[name] !== undefined) {
+                        const cell = cells[columnIndices[name]];
+                        if (cell) {
+                            const value = parseFloat(cell.innerText.trim().replace(/[^\d.-]/g, '')) || 0;
+                            if (calculateDuplicates[index] || !seen.has(uniqueValue)) {
+                                totals[name] += value;
+                            }
+                        }
+                    }
+                });
+
+                seen.add(uniqueValue);
+            });
+        }
 
         return totals;
     }
