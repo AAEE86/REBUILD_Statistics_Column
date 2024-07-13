@@ -1,7 +1,7 @@
 (async function() {
     'use strict';
 
-    async function extractAndDisplayData(columnNames, calculateDuplicates, uniqueColumn) {
+    async function extractAndDisplayData(columnNames, calculateDuplicates, colors, uniqueColumn) {
         const table = document.querySelector('.table'); // 根据实际情况修改选择器
 
         if (!table) {
@@ -15,7 +15,7 @@
         console.log('列索引:', columnIndices);
 
         const totals = calculateTotals(table, columnNames, columnIndices, calculateDuplicates, uniqueColumn);
-        displayTotals(totals, columnIndices);
+        displayTotals(totals, columnIndices, columnNames, colors);
     }
 
     function getColumnIndices(table, columnNames, uniqueColumn) {
@@ -85,10 +85,10 @@
         return totals;
     }
 
-    function displayTotals(totals, columnIndices) {
-        const sumText = Object.entries(totals).map(([name, total]) => {
+    function displayTotals(totals, columnIndices, columnNames, colors) {
+        const sumText = columnNames.map((name, index) => {
             if (columnIndices[name] !== undefined) {
-                return `<span style="margin-right: 10px;">总${name}: <span style="color: #4CAF50;">¥ ${total.toFixed(2)}</span></span>`;
+                return `<span style="margin-right: 10px; color: ${colors[index]};">总${name}: <span style="color: ${colors[index]};">¥ ${totals[name].toFixed(2)}</span></span>`;
             }
             return '';
         }).join('');
@@ -121,7 +121,7 @@
         document.body.appendChild(sumDiv);
     }
 
-    function observeTableChanges(columnNames, calculateDuplicates, uniqueColumn) {
+    function observeTableChanges(columnNames, calculateDuplicates, colors, uniqueColumn) {
         const targetNode = document.querySelector('.table');
         if (!targetNode) {
             console.log('未找到 .table 元素以进行观察');
@@ -132,7 +132,7 @@
         const observer = new MutationObserver((mutationsList) => {
             for (const mutation of mutationsList) {
                 if (mutation.type === 'childList') {
-                    extractAndDisplayData(columnNames, calculateDuplicates, uniqueColumn);
+                    extractAndDisplayData(columnNames, calculateDuplicates, colors, uniqueColumn);
                 }
             }
         });
@@ -145,7 +145,7 @@
                 const row = event.target.closest('tr');
                 if (row) {
                     row.classList.toggle('active', event.target.checked);
-                    extractAndDisplayData(columnNames, calculateDuplicates, uniqueColumn);
+                    extractAndDisplayData(columnNames, calculateDuplicates, colors, uniqueColumn);
                 }
             }
         });
@@ -154,13 +154,13 @@
     window.addEventListener('load', async () => {
         setTimeout(async () => {
             const result = await new Promise((resolve) => {
-                chrome.storage.sync.get(['columnNames', 'calculateDuplicates', 'url', 'uniqueColumn'], resolve);
+                chrome.storage.sync.get(['columnNames', 'calculateDuplicates', 'colors', 'url', 'uniqueColumn'], resolve);
             });
             const currentUrl = window.location.href;
             if (result.url && currentUrl.startsWith(result.url)) {
                 if (result.columnNames) {
-                    extractAndDisplayData(result.columnNames, result.calculateDuplicates, result.uniqueColumn);
-                    observeTableChanges(result.columnNames, result.calculateDuplicates, result.uniqueColumn);
+                    extractAndDisplayData(result.columnNames, result.calculateDuplicates, result.colors, result.uniqueColumn);
+                    observeTableChanges(result.columnNames, result.calculateDuplicates, result.colors, result.uniqueColumn);
                 }
             }
         }, 1000); // 延迟执行，适当调整时间

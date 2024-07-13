@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', function() {
     loadOptions();
 });
 
-function addColumn(name = '', calculateDuplicates = true) {
+function addColumn(name = '', calculateDuplicates = true, color = '#000000') {
     var container = document.createElement('div');
     container.className = 'form-group';
 
@@ -35,6 +35,16 @@ function addColumn(name = '', calculateDuplicates = true) {
     checkbox.checked = calculateDuplicates;
     container.appendChild(checkbox);
 
+    var colorLabel = document.createElement('label');
+    colorLabel.textContent = '颜色:';
+    container.appendChild(colorLabel);
+
+    var colorInput = document.createElement('input');
+    colorInput.type = 'color';
+    colorInput.className = 'column-color';
+    colorInput.value = color;
+    container.appendChild(colorInput);
+
     var removeButton = document.createElement('button');
     removeButton.className = 'remove-column';
     removeButton.textContent = '删除';
@@ -49,32 +59,35 @@ function addColumn(name = '', calculateDuplicates = true) {
 function saveOptions() {
     var columnNames = [];
     var calculateDuplicates = [];
+    var colors = [];
     var inputs = document.getElementsByClassName('column-name');
     var checkboxes = document.getElementsByClassName('calculate-duplicates');
+    var colorInputs = document.getElementsByClassName('column-color');
     for (var i = 0; i < inputs.length; i++) {
         columnNames.push(inputs[i].value);
         calculateDuplicates.push(checkboxes[i].checked);
+        colors.push(colorInputs[i].value);
     }
 
     var url = document.getElementById('url').value;
     var uniqueColumn = document.getElementById('unique-column').value;
 
-    chrome.storage.sync.set({ columnNames: columnNames, calculateDuplicates: calculateDuplicates, url: url, uniqueColumn: uniqueColumn }, function() {
+    chrome.storage.sync.set({ columnNames: columnNames, calculateDuplicates: calculateDuplicates, colors: colors, url: url, uniqueColumn: uniqueColumn }, function() {
         alert('选项已保存');
     });
 }
 
 function loadOptions() {
-    chrome.storage.sync.get(['columnNames', 'calculateDuplicates', 'url', 'uniqueColumn'], function(result) {
+    chrome.storage.sync.get(['columnNames', 'calculateDuplicates', 'colors', 'url', 'uniqueColumn'], function(result) {
         if (result.url) {
             document.getElementById('url').value = result.url;
         }
         if (result.uniqueColumn) {
             document.getElementById('unique-column').value = result.uniqueColumn;
         }
-        if (result.columnNames && result.calculateDuplicates) {
+        if (result.columnNames && result.calculateDuplicates && result.colors) {
             for (var i = 0; i < result.columnNames.length; i++) {
-                addColumn(result.columnNames[i], result.calculateDuplicates[i]);
+                addColumn(result.columnNames[i], result.calculateDuplicates[i], result.colors[i]);
             }
         }
     });

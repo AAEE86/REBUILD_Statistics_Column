@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Extract Table Data",
-  "version": "1.0.2",
+  "version": "1.1",
   "description": "Extract data from specific table columns and display totals.",
   "permissions": [
     "activeTab",
