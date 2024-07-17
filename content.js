@@ -110,7 +110,7 @@
             border: 1px solid #ccc;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             border-radius: 8px;
-            z-index: 9999;
+            z-index: 999;
             font-family: Arial, sans-serif;
             font-size: 13px;
             display: flex;
@@ -151,19 +151,17 @@
         });
     }
 
-    window.addEventListener('load', async () => {
-        setTimeout(async () => {
-            const result = await new Promise((resolve) => {
-                chrome.storage.sync.get(['columnNames', 'calculateDuplicates', 'colors', 'url', 'uniqueColumn'], resolve);
-            });
-            const currentUrl = window.location.href;
-            if (result.url && currentUrl.startsWith(result.url)) {
-                if (result.columnNames) {
-                    extractAndDisplayData(result.columnNames, result.calculateDuplicates, result.colors, result.uniqueColumn);
-                    observeTableChanges(result.columnNames, result.calculateDuplicates, result.colors, result.uniqueColumn);
-                }
+    window.onload = async () => {
+        const result = await new Promise((resolve) => {
+            chrome.storage.sync.get(['columnNames', 'calculateDuplicates', 'colors', 'url', 'uniqueColumn'], resolve);
+        });
+        const currentUrl = window.location.href;
+        if (result.url && currentUrl.startsWith(result.url)) {
+            if (result.columnNames) {
+                extractAndDisplayData(result.columnNames, result.calculateDuplicates, result.colors, result.uniqueColumn);
+                observeTableChanges(result.columnNames, result.calculateDuplicates, result.colors, result.uniqueColumn);
             }
-        }, 1000); // 延迟执行，适当调整时间
-    });
+        }
+    };
 
 })();
