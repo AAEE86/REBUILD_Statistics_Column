@@ -20,7 +20,8 @@
 
 	function getColumnIndices(table, columnNames, uniqueColumn) {
 		const headers = table.querySelectorAll('thead th');
-		const indices = Array.from(headers).reduce((indices, header, index) => {
+		const indices = Array.from(headers)
+			.reduce((indices, header, index) => {
 				const text = header.innerText.trim();
 				if (columnNames.includes(text) || text === uniqueColumn) {
 					indices[text] = index;
@@ -51,7 +52,8 @@
 					if (columnIndices[name] !== undefined) {
 						const cell = cells[columnIndices[name]];
 						if (cell) {
-							const value = parseFloat(cell.innerText.trim().replace(/[^\d.-]/g, '')) || 0;
+							const value = parseFloat(cell.innerText.trim()
+								.replace(/[^\d.-]/g, '')) || 0;
 							totals[name] += value;
 						}
 					}
@@ -70,7 +72,8 @@
 					if (columnIndices[name] !== undefined) {
 						const cell = cells[columnIndices[name]];
 						if (cell) {
-							const value = parseFloat(cell.innerText.trim().replace(/[^\d.-]/g, '')) || 0;
+							const value = parseFloat(cell.innerText.trim()
+								.replace(/[^\d.-]/g, '')) || 0;
 							if (calculateDuplicates[index] || !seen.has(uniqueValue)) {
 								totals[name] += value;
 							}
@@ -88,10 +91,11 @@
 	function displayTotals(totals, columnIndices, columnNames, colors) {
 		const sumText = columnNames.map((name, index) => {
 				if (columnIndices[name] !== undefined) {
-					return `<span style="margin-right: 10px;">${name}: <span style="color: ${colors[index]};">¥ ${totals[name].toFixed(2)}</span></span>`;
+					return `<span class="stat-item">${name}: <span style="color: ${colors[index]};">¥ ${totals[name].toFixed(2)}</span></span>`;
 				}
 				return '';
-			}).join('');
+			})
+			.join('');
 
 		// 插入到目标元素内部
 		const targetElement = document.querySelector('.list-stats-settings');
@@ -101,7 +105,7 @@
 			targetElement.style.fontSize = '13.5px';
 			targetElement.style.fontWeight = 'bold';
 			targetElement.style.opacity = 'unset';
-			targetElement.style.padding = '11px 1px'
+			targetElement.style.padding = '11px 0px'
 		} else {
 			console.log('未找到 .dataTables_info 元素');
 		}
@@ -114,7 +118,10 @@
 			return;
 		}
 
-		const config = {childList: true,subtree: true};
+		const config = {
+			childList: true,
+			subtree: true
+		};
 		const observer = new MutationObserver((mutationsList) => {
 			for (const mutation of mutationsList) {
 				if (mutation.type === 'childList') {
