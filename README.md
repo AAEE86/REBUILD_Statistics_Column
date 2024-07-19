@@ -2,7 +2,8 @@
 
 （PS：原项目2.6版本统计列功能免费版是可以使用的，但之后就不支持免费版了,理解其开源的难处，但作为基础的功能还希望官方可以提供对免费版支持）
 
-![图片_20240718175445](https://github.com/user-attachments/assets/c5ab46e6-e832-4788-bd8e-fbdc34d93260)
+![Quicker_20240719_084912](https://github.com/user-attachments/assets/7b79698a-d558-494b-9ed5-5f826e69c7bd)
+
 
 样式如上图
 
