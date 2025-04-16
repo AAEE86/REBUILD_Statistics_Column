@@ -1,3 +1,6 @@
+去除了统计字段的限制
+https://github.com/AAEE86/rebuild/tree/Break-limit
+
 本项目是此项目 https://github.com/getrebuild/rebuild 的浏览器扩展，用于免费版没有统计列功能的补充
 
 （PS：原项目2.6版本统计列功能免费版是可以使用的，但之后就不支持免费版了,理解其开源的难处，但作为基础的功能还希望官方可以提供对免费版支持）
